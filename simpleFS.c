@@ -616,6 +616,7 @@ void make_directory(char *path, unsigned int n)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[parent directory does not exist]\n");
+            free(paths);
             return;
         } else {
             curr = &inode_table[inode_num];
@@ -627,6 +628,7 @@ void make_directory(char *path, unsigned int n)
     uint32_t inode_num = contains(curr, paths[i]);
     if (inode_num != -1) {
         printf("[directory already exits]\n");
+        free(paths);
         return;
     }
     
@@ -683,6 +685,7 @@ void make_directory(char *path, unsigned int n)
     printf("[directory created]\n");
     
     writeDataToDisk();
+    free(paths);
 }
 
 unsigned int read_directory(char *path, unsigned int n, char *data)
@@ -707,6 +710,7 @@ unsigned int read_directory(char *path, unsigned int n, char *data)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[directory %s does not exist]\n", paths[i]);
+            free(paths);
             return 0;
         } else {
             curr = &inode_table[inode_num];
@@ -728,7 +732,7 @@ unsigned int read_directory(char *path, unsigned int n, char *data)
     }
     
     curr->i_time = get_time_stamp();
-    
+    free(paths);
     return bytes;
 }
 
@@ -754,6 +758,7 @@ void rm_directory(char *path, unsigned int n)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[directory %s does not exist]\n", paths[i]);
+            free(paths);
             return;
         } else {
             prev = curr;
@@ -769,6 +774,7 @@ void rm_directory(char *path, unsigned int n)
     int num_of_dirs = curr->i_size / sizeof(struct directory_entry);
     if (num_of_dirs > 2) {
         printf("[diretory that has remaining files cannot be remove]\n");
+        free(paths);
         return;
     }
     
@@ -798,6 +804,7 @@ void rm_directory(char *path, unsigned int n)
     printf("[directory removed]\n");
     
     writeDataToDisk();
+    free(paths);
 }
 
 void create_file(char *path, unsigned int n, unsigned int size, char *data)
@@ -822,6 +829,7 @@ void create_file(char *path, unsigned int n, unsigned int size, char *data)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[parent directory does not exist]\n");
+            free(paths);
             return;
         } else {
             curr = &inode_table[inode_num];
@@ -832,6 +840,7 @@ void create_file(char *path, unsigned int n, unsigned int size, char *data)
     uint32_t inode_num = contains(curr, paths[i]);
     if (inode_num != -1) {
         printf("[file already exits]\n");
+        free(paths);
         return;
     }
     
@@ -878,6 +887,7 @@ void create_file(char *path, unsigned int n, unsigned int size, char *data)
     printf("[file created]\n");
     
     writeDataToDisk();
+    free(paths);
 }
 
 unsigned int read_file(char *path, unsigned int n, char *data)
@@ -902,6 +912,7 @@ unsigned int read_file(char *path, unsigned int n, char *data)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[%s does not exist]\n", paths[i]);
+            free(paths);
             return 0;
         } else {
             curr = &inode_table[inode_num];
@@ -912,7 +923,7 @@ unsigned int read_file(char *path, unsigned int n, char *data)
     strncpy(data, data_addr, curr->i_size);
     
     curr->i_time = get_time_stamp();
-    
+    free(paths);
     return curr->i_size;
 }
 
@@ -938,6 +949,7 @@ void rm_file(char *path, unsigned int n)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[%s does not exist]\n", paths[i]);
+            free(paths);
             return;
         } else {
             prev = curr;
@@ -968,6 +980,7 @@ void rm_file(char *path, unsigned int n)
         curr->i_links_count--;
         printf("[file removed]\n");
         writeDataToDisk();
+        free(paths);
         return;
     }
     
@@ -989,6 +1002,7 @@ void rm_file(char *path, unsigned int n)
     printf("[file removed]\n");
     
     writeDataToDisk();
+    free(paths);
 }
 
 void make_link(char *path, unsigned int n, char *target)
@@ -1011,6 +1025,7 @@ void make_link(char *path, unsigned int n, char *target)
         uint32_t inode_num = contains(curr_target, paths_target[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[%s does not exist]\n", paths_target[i]);
+            free(paths_target);
             return;
         } else {
             curr_target = &inode_table[inode_num];
@@ -1021,6 +1036,7 @@ void make_link(char *path, unsigned int n, char *target)
     /* check if the target file is a directory */
     if (curr_target->i_mode == S_DIR) {
         printf("[%s is a directory]\n", paths_target[depth_of_target_path-1]);
+        free(paths_target);
         return;
     }
     
@@ -1037,6 +1053,7 @@ void make_link(char *path, unsigned int n, char *target)
         uint32_t inode_num = contains(curr, paths[i]);
         if (inode_num == -1) { // dir does not exist
             printf("[parent directory does not exist]\n");
+            free(paths);
             return;
         } else {
             curr = &inode_table[inode_num];
@@ -1047,6 +1064,7 @@ void make_link(char *path, unsigned int n, char *target)
     uint32_t inode_num = contains(curr, paths[i]);
     if (inode_num != -1) {
         printf("[file %s already exits]\n", paths[i]);
+        free(paths);
         return;
     }
     
@@ -1067,4 +1085,5 @@ void make_link(char *path, unsigned int n, char *target)
     printf("[hard link created]\n");
     
     writeDataToDisk();
+    free(paths);
 }
