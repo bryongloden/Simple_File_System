@@ -90,7 +90,7 @@ int main(int argc, char **argv)
        struct inode inode = inode_table[i+1];
        if (inode.i_mode == S_REG) {
                // is a file and needs to be written
-         char filename[10];
+         char filename[17];
          sprintf(filename, "recover_file%d", i+1);
          out_file = fopen(filename, "w");
 
